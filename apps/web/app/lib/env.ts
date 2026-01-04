@@ -8,8 +8,9 @@ export interface Env {
 // Get environment variables (works in both server and client)
 export function getEnv(): Env {
   return {
-    VITE_API_URL: import.meta.env.VITE_API_URL || 'https://eluma.test/api',
-    VITE_AUTH_URL: import.meta.env.VITE_AUTH_URL || 'https://eluma.test/auth',
+    // Use relative paths as default (works with nginx reverse proxy)
+    VITE_API_URL: import.meta.env.VITE_API_URL || '/api',
+    VITE_AUTH_URL: import.meta.env.VITE_AUTH_URL || '/auth',
     VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
   };
 }

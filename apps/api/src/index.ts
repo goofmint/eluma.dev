@@ -17,7 +17,9 @@ const getEnv = (c: { env?: Bindings }, key: keyof Bindings): string | undefined 
 
 // Enable CORS for all routes
 app.use('*', async (c, next) => {
-  const allowedOrigins = getEnv(c, 'ALLOWED_ORIGINS') || 'https://eluma.test';
+  // ALLOWED_ORIGINS must be set in production
+  // Use '*' for development if not specified
+  const allowedOrigins = getEnv(c, 'ALLOWED_ORIGINS') || '*';
 
   const corsMiddleware = cors({
     origin: (origin) => {
@@ -106,19 +108,26 @@ app.openapi(rootRoute, (c) => {
 });
 
 // OpenAPI documentation endpoint
-app.doc('/doc', {
-  openapi: '3.0.0',
-  info: {
-    title: 'Eluma API',
-    version: '0.0.1',
-    description: 'AI-Optimized Social Bookmark Platform API',
-  },
-  servers: [
-    {
-      url: 'https://eluma.test/api',
-      description: 'Local development server',
+app.doc('/doc', (c) => {
+  // Dynamically set server URL based on request
+  const protocol = c.req.header('x-forwarded-proto') || 'https';
+  const host = c.req.header('host') || 'localhost';
+  const baseUrl = `${protocol}://${host}`;
+
+  return {
+    openapi: '3.0.0',
+    info: {
+      title: 'Eluma API',
+      version: '0.0.1',
+      description: 'AI-Optimized Social Bookmark Platform API',
     },
-  ],
+    servers: [
+      {
+        url: baseUrl,
+        description: 'Current server',
+      },
+    ],
+  };
 });
 
 export default app;
