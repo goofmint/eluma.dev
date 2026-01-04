@@ -67,6 +67,7 @@ jobs:
       - name: Build Web
         run: pnpm -F @eluma/web build
         env:
+          BUILD_TARGET: cloudflare
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL }}
 
