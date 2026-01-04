@@ -1,0 +1,110 @@
+name: Preview
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview-api:
+    name: Preview API
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Deploy Preview to Workers
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/api
+          command: deploy --env preview
+
+      - name: Comment PR with API preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const output = `${{ steps.deploy.outputs.deployment-url }}`;
+            if (output) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `🚀 **API Preview:** ${output}`
+              });
+            }
+
+  preview-web:
+    name: Preview Web
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Web for Cloudflare
+        run: pnpm --filter @eluma/web build
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL_PREVIEW }}
+          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL_PREVIEW }}
+
+      - name: Deploy Preview to Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/web
+          command: pages deploy build/client --project-name=eluma-web --branch=pr-${{ github.event.pull_request.number }}
+
+      - name: Comment PR with Web preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const output = `${{ steps.deploy.outputs.deployment-url }}`;
+            if (output) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `🌐 **Web Preview:** ${output}`
+              });
+            }

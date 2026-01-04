@@ -97,7 +97,7 @@ Running `docker compose up` starts all services.
 
 - Docker & Docker Compose
 - Node.js 20+ (LTS recommended)
-- pnpm 8+
+- pnpm 9+
 
 ### 1. Clone the repository
 
@@ -199,26 +199,66 @@ pnpm typecheck
 pnpm build
 ```
 
-## Deployment (Cloudflare Workers)
+## Deployment (Cloudflare)
 
 ### Prerequisites
 
-- Cloudflare account
-- `wrangler` configured
-- GitHub repository secrets set
+- Cloudflare account with Workers and Pages enabled
+- Wrangler CLI (`npm install -g wrangler`)
+- GitHub repository with Actions enabled
 
-### Required Secrets
+### GitHub Secrets (Required)
 
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `OPENAI_API_KEY` (for moderation and MCP Q&A)
+Set these in your repository settings (Settings → Secrets and variables → Actions):
+
+| Secret | Description |
+|--------|-------------|
+| `CLOUDFLARE_API_TOKEN` | API token with Workers/Pages permissions |
+| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID |
+
+### GitHub Variables (Optional)
+
+Set these for production URL configuration:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `VITE_API_URL` | Production API URL | `https://api.example.com` |
+| `VITE_AUTH_URL` | Production Auth URL | `https://auth.example.com` |
+
+### Cloudflare Secrets
+
+Set API secrets using Wrangler:
+
+```bash
+cd apps/api
+wrangler secret put ALLOWED_ORIGINS
+wrangler secret put JWT_SECRET
+```
+
+### Manual Deployment
+
+```bash
+# Deploy API to Workers
+cd apps/api
+pnpm deploy
+
+# Deploy Web to Pages
+cd apps/web
+pnpm deploy
+```
+
+### Automatic Deployment
+
+- **Push to `main`**: Automatically deploys API to Workers and Web to Pages
+- **Pull requests**: Creates preview deployments with unique URLs
+- Preview URLs are posted as comments on the PR
 
 ### Deployment Flow
 
-- Each pull request is expected to be **deployable**
-- `main` branch is automatically deployed via GitHub Actions
-- API runs on Cloudflare Workers
-- UI is deployed via Cloudflare Pages or Workers static assets
+1. CI runs lint, typecheck, and tests
+2. On success, deploy workflow triggers
+3. API deploys to Cloudflare Workers (`eluma-api`)
+4. Web deploys to Cloudflare Pages (`eluma-web`)
 
 ## Comment Moderation Model
 

@@ -6,10 +6,17 @@ compatibility_flags = ["nodejs_compat"]
 [dev]
 port = 8787
 
-# For local development with docker compose
-[env.development]
-vars = { ENVIRONMENT = "development" }
+# Environment variables (non-sensitive)
+[vars]
+ENVIRONMENT = "production"
 
-# For production deployment
-[env.production]
-vars = { ENVIRONMENT = "production", ALLOWED_ORIGINS = "https://your-domain.com" }
+# Secrets (set via wrangler secret put):
+# - ALLOWED_ORIGINS
+# - JWT_SECRET
+# - DATABASE_URL (future)
+# - OPENAI_API_KEY (future)
+
+# Preview environment for PR deployments
+[env.preview]
+name = "eluma-api-preview"
+vars = { ENVIRONMENT = "preview" }

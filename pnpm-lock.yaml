@@ -102,7 +102,7 @@ importers:
     devDependencies:
       '@react-router/dev':
         specifier: ^7.2.0
-        version: 7.11.0(@react-router/serve@7.11.0)(@types/node@20.19.27)(react-router@7.11.0)(typescript@5.9.3)(vite@6.4.1)
+        version: 7.11.0(@react-router/serve@7.11.0)(@types/node@20.19.27)(react-router@7.11.0)(typescript@5.9.3)(vite@6.4.1)(wrangler@4.54.0)
       '@types/node':
         specifier: ^20.17.16
         version: 20.19.27
@@ -121,6 +121,9 @@ importers:
       vitest:
         specifier: ^3.1.0
         version: 3.2.4(@types/node@20.19.27)(tsx@4.21.0)
+      wrangler:
+        specifier: ^4.54.0
+        version: 4.54.0(@cloudflare/workers-types@4.20260103.0)
 
 packages:
 
@@ -1361,7 +1364,7 @@ packages:
     resolution: {integrity: sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw==}
     dev: true
 
-  /@react-router/dev@7.11.0(@react-router/serve@7.11.0)(@types/node@20.19.27)(react-router@7.11.0)(typescript@5.9.3)(vite@6.4.1):
+  /@react-router/dev@7.11.0(@react-router/serve@7.11.0)(@types/node@20.19.27)(react-router@7.11.0)(typescript@5.9.3)(vite@6.4.1)(wrangler@4.54.0):
     resolution: {integrity: sha512-g1ou5Zw3r4mCU0L+EXH4vRtAiyt8qz1JOvL1k+PW4rZ4+71h5nBy/fLgD7cg5BnzQZmjRO1PzCgpF5BIrlKYxQ==}
     engines: {node: '>=20.0.0'}
     hasBin: true
@@ -1417,6 +1420,7 @@ packages:
       valibot: 1.2.0(typescript@5.9.3)
       vite: 6.4.1(@types/node@20.19.27)(tsx@4.21.0)
       vite-node: 3.2.4(@types/node@20.19.27)(tsx@4.21.0)
+      wrangler: 4.54.0(@cloudflare/workers-types@4.20260103.0)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros

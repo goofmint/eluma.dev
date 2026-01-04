@@ -28,21 +28,21 @@
 
 ---
 
-## Iteration 1（PR#1）Cloudflare Workers デプロイ基盤（最小）
+## Iteration 1（PR#1）Cloudflare Workers デプロイ基盤（最小） ✅
 
 目的：同じAPI/UIがCloudflareへデプロイできる。以降は「毎PRデプロイ可能」を担保。
 
-- [ ] Workers 用プロジェクト設定（wrangler）追加（API）
-- [ ] UIのデプロイ先決定（推奨：Cloudflare Pages or Workers static）と雛形設定
-- [ ] GitHub Actions：`main` マージで自動デプロイ（API/UI）
-- [ ] 環境変数/Secrets（Supabase URL/Key）設定方法をREADMEへ追記
-- [ ] `GET /healthz` をWorkers上でも動作させる
-- [ ] UIからWorkersの`/healthz`疎通確認（環境別ベースURL切替）
-- [ ] Preview環境（PRごとデプロイ）を可能なら設定（少なくとも手動でPR確認できる導線）
+- [x] Workers 用プロジェクト設定（wrangler）追加（API）
+- [x] UIのデプロイ先決定（推奨：Cloudflare Pages or Workers static）と雛形設定
+- [x] GitHub Actions：`main` マージで自動デプロイ（API/UI）
+- [x] 環境変数/Secrets（Supabase URL/Key）設定方法をREADMEへ追記
+- [x] `GET /healthz` をWorkers上でも動作させる
+- [x] UIからWorkersの`/healthz`疎通確認（環境別ベースURL切替）
+- [x] Preview環境（PRごとデプロイ）を可能なら設定（少なくとも手動でPR確認できる導線）
 
 成果物（確認方法）：
 
-- Workers上の`/healthz`が応答し、UIから到達できる
+- Workers上の`/healthz`が応答し、UIから到達できる ✅
 
 ---
 

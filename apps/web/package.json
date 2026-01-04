@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router build",
+    "build:cloudflare": "react-router build && npm run build:functions",
+    "build:functions": "wrangler pages functions build --outdir build/functions",
     "start": "react-router-serve ./build/server/index.js",
+    "deploy": "npm run build:cloudflare && wrangler pages deploy build/client",
+    "deploy:preview": "npm run build:cloudflare && wrangler pages deploy build/client --branch preview",
     "lint": "eslint app --ext .ts,.tsx",
     "lint:fix": "eslint app --ext .ts,.tsx --fix",
     "typecheck": "react-router typegen && tsc --noEmit",
@@ -29,6 +33,7 @@
     "@types/react-dom": "^19.0.3",
     "typescript": "^5.8.3",
     "vite": "^6.1.0",
-    "vitest": "^3.1.0"
+    "vitest": "^3.1.0",
+    "wrangler": "^4.54.0"
   }
 }
