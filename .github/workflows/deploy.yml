@@ -42,7 +42,7 @@ jobs:
           command: deploy
 
   deploy-web:
-    name: Deploy Web to Pages
+    name: Deploy Web to Workers
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -64,16 +64,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Web for Cloudflare
-        run: pnpm --filter @eluma/web build
-        env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL }}
-
-      - name: Deploy to Cloudflare Pages
+      - name: Build and Deploy Web
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/web
-          command: pages deploy build/client --project-name=eluma-web
+          command: deploy
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL }}

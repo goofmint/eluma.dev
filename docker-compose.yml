@@ -55,8 +55,8 @@ services:
       GOTRUE_JWT_AUD: authenticated
       GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
       GOTRUE_JWT_EXP: ${JWT_EXPIRY:-3600}
-      # JWT_SECRET is required - using insecure default for dev only
-      GOTRUE_JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required. Generate with: openssl rand -base64 32}
+      # JWT_SECRET is required (generate with: openssl rand -base64 32)
+      GOTRUE_JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       GOTRUE_EXTERNAL_EMAIL_ENABLED: ${ENABLE_EMAIL_SIGNUP:-true}
       # Default to false to require email verification in production
       GOTRUE_MAILER_AUTOCONFIRM: ${ENABLE_EMAIL_AUTOCONFIRM:-false}

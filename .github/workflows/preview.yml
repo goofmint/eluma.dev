@@ -80,20 +80,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Web for Cloudflare
-        run: pnpm --filter @eluma/web build
-        env:
-          VITE_API_URL: ${{ vars.VITE_API_URL_PREVIEW }}
-          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL_PREVIEW }}
-
-      - name: Deploy Preview to Pages
+      - name: Deploy Preview to Workers
         id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/web
-          command: pages deploy build/client --project-name=eluma-web --branch=pr-${{ github.event.pull_request.number }}
+          command: deploy --env preview
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL_PREVIEW }}
+          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL_PREVIEW }}
 
       - name: Comment PR with Web preview URL
         uses: actions/github-script@v7
