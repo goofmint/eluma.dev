@@ -100,14 +100,14 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-https://eluma.test}
+        VITE_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
     container_name: eluma-web
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      VITE_API_URL: ${VITE_API_URL:-https://eluma.test/api}
-      VITE_AUTH_URL: ${VITE_AUTH_URL:-https://eluma.test/auth}
-      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-https://eluma.test}
-      VITE_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
     depends_on:
       - api
 

@@ -10,11 +10,13 @@ export function getSupabase(): SupabaseClient {
   }
 
   const env = getEnv();
-  const supabaseUrl = env.VITE_AUTH_URL;
+  const supabaseUrl = env.VITE_SUPABASE_URL;
   const supabaseKey = env.VITE_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase configuration missing');
+    throw new Error(
+      'Supabase configuration missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+    );
   }
 
   supabaseClient = createClient(supabaseUrl, supabaseKey, {
