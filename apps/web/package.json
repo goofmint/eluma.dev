@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router build",
+    "build:cloudflare": "BUILD_TARGET=cloudflare react-router build",
     "start": "react-router-serve ./build/server/index.js",
+    "deploy": "BUILD_TARGET=cloudflare react-router build && wrangler deploy",
+    "deploy:preview": "BUILD_TARGET=cloudflare react-router build && wrangler deploy --env preview",
     "lint": "eslint app --ext .ts,.tsx",
     "lint:fix": "eslint app --ext .ts,.tsx --fix",
     "typecheck": "react-router typegen && tsc --noEmit",
@@ -23,12 +26,14 @@
     "react-router": "^7.2.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.0.0",
     "@react-router/dev": "^7.2.0",
     "@types/node": "^20.17.16",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "typescript": "^5.8.3",
     "vite": "^6.1.0",
-    "vitest": "^3.1.0"
+    "vitest": "^3.1.0",
+    "wrangler": "^4.54.0"
   }
 }
