@@ -8,23 +8,23 @@
 
 ---
 
-## Iteration 0（PR#0）リポジトリ雛形・開発基盤（ローカルのみ）
+## Iteration 0（PR#0）リポジトリ雛形・開発基盤（ローカルのみ） ✅
 
 目的：開発が開始できる最小基盤。ローカルでUI/API/DBが起動し、疎通が取れる。
 
-- [ ] monorepo 構成作成（例：`apps/api`, `apps/web`, `infra/`）
-- [ ] Node/Yarn/pnpm 等のパッケージ管理方針決定・導入
-- [ ] `docker-compose.yml` 作成（Postgres + Supabase self-host 推奨 + api + web）
-- [ ] Supabase self-host 構成のセットアップ（最低限：Auth/DB）
-- [ ] Hono API サーバー雛形（ローカル起動、`/healthz`）
-- [ ] React Router UI 雛形（ローカル起動、トップページ表示）
-- [ ] UI → API 疎通（`/healthz` を叩いて表示）
-- [ ] 環境変数の雛形（`.env.example`）とREADME手順（起動・停止・初期化）
-- [ ] Lint/Format（ESLint/Prettier）導入、CI（lint/test）追加（GitHub Actions）
+- [x] monorepo 構成作成（例：`apps/api`, `apps/web`, `infra/`）
+- [x] Node/Yarn/pnpm 等のパッケージ管理方針決定・導入
+- [x] `docker-compose.yml` 作成（Postgres + Supabase self-host 推奨 + api + web）
+- [x] Supabase self-host 構成のセットアップ（最低限：Auth/DB）
+- [x] Hono API サーバー雛形（ローカル起動、`/healthz`）
+- [x] React Router UI 雛形（ローカル起動、トップページ表示）
+- [x] UI → API 疎通（`/healthz` を叩いて表示）
+- [x] 環境変数の雛形（`.env.example`）とREADME手順（起動・停止・初期化）
+- [x] Lint/Format（ESLint/Prettier）導入、CI（lint/test）追加（GitHub Actions）
 
 成果物（確認方法）：
 
-- `docker compose up` で起動し、UIが表示され、API疎通が確認できる
+- `docker compose up` で起動し、UIが表示され、API疎通が確認できる ✅
 
 ---
 
