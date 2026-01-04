@@ -64,13 +64,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build and Deploy Web
+      - name: Build Web
+        run: pnpm -F @eluma/web build
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL }}
+
+      - name: Deploy Web to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/web
           command: deploy
-        env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          VITE_AUTH_URL: ${{ vars.VITE_AUTH_URL }}
