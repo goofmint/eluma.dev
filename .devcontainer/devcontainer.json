@@ -60,7 +60,7 @@
   ],
 
   // Post-creation commands
-  "postCreateCommand": "bash -c 'sudo chown -R node:node /home/node/.pnpm-store /workspace/node_modules /home/node/commandhistory && mkdir -p /home/node/commandhistory && echo \"export HISTFILE=/home/node/commandhistory/.bash_history\" >> /home/node/.bashrc && pnpm install'",
+  "postCreateCommand": "bash -c 'sudo chown -R node:node /home/node/.pnpm-store /workspace/node_modules /home/node/commandhistory && mkdir -p /home/node/commandhistory && grep -qxF \"export HISTFILE=/home/node/commandhistory/.bash_history\" /home/node/.bashrc || echo \"export HISTFILE=/home/node/commandhistory/.bash_history\" >> /home/node/.bashrc && pnpm install'",
 
   // Post-start commands (optional: auto-start infra)
   // Uncomment to auto-start infrastructure on container start

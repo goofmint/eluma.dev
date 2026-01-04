@@ -28,9 +28,18 @@ exec(command, (error, stdout) => {
     process.exit(1);
   });
 
-  // Handle Ctrl+C gracefully
+  // Handle Ctrl+C gracefully (cross-platform)
   process.on('SIGINT', () => {
-    logsProcess.kill('SIGINT');
-    process.exit(0);
+    logsProcess.kill('SIGTERM');
+
+    // Force kill if process doesn't terminate within 1 second
+    const forceKillTimeout = setTimeout(() => {
+      logsProcess.kill('SIGKILL');
+    }, 1000);
+
+    logsProcess.on('exit', () => {
+      clearTimeout(forceKillTimeout);
+      process.exit(0);
+    });
   });
 });

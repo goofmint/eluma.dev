@@ -53,7 +53,7 @@ services:
 
   # Supabase Auth
   auth:
-    image: supabase/gotrue:v2.99.0
+    image: supabase/gotrue:v2.171.0
     container_name: eluma-auth
     restart: unless-stopped
     environment:
@@ -103,7 +103,7 @@ services:
 
   # Supabase Realtime
   realtime:
-    image: supabase/realtime:v2.10.1
+    image: supabase/realtime:v2.33.53
     container_name: eluma-realtime
     restart: unless-stopped
     environment:
