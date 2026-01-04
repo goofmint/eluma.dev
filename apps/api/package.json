@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
+    "@hono/zod-openapi": "^0.19.6",
     "hono": "^4.10.3"
   },
   "devDependencies": {

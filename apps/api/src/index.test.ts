@@ -13,6 +13,15 @@ interface RootResponse {
   docs: string;
 }
 
+interface OpenAPISpec {
+  openapi: string;
+  info: {
+    title: string;
+    version: string;
+  };
+  paths: Record<string, unknown>;
+}
+
 describe('API Endpoints', () => {
   describe('GET /healthz', () => {
     it('should return health status', async () => {
@@ -34,6 +43,19 @@ describe('API Endpoints', () => {
       const body = (await res.json()) as RootResponse;
       expect(body.message).toBe('Eluma API');
       expect(body.version).toBeDefined();
+      expect(body.docs).toBe('/doc');
+    });
+  });
+
+  describe('GET /doc', () => {
+    it('should return OpenAPI specification', async () => {
+      const res = await app.request('/doc');
+      expect(res.status).toBe(200);
+
+      const body = (await res.json()) as OpenAPISpec;
+      expect(body.openapi).toBe('3.0.0');
+      expect(body.info.title).toBe('Eluma API');
+      expect(body.paths['/healthz']).toBeDefined();
     });
   });
 });
