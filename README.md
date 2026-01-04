@@ -66,7 +66,7 @@ This project focuses on:
 - **API**: Hono on Node.js (@hono/node-server)
 - **UI**: React Router (SSR)
 
-`docker compose up` だけで全サービスが起動します。
+Running `docker compose up` starts all services.
 
 ## Repository Structure
 
