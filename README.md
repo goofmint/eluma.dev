@@ -62,9 +62,11 @@ This project focuses on:
 
 - **Container orchestration**: Docker Compose
 - **Database**: PostgreSQL
-- **Supabase**: Self-hosted Supabase stack (recommended)
+- **Auth**: GoTrue (Supabase Auth)
+- **API**: Hono on Node.js (@hono/node-server)
+- **UI**: React Router (SSR)
 
-The OSS version and production version share the same logical architecture.
+`docker compose up` だけで全サービスが起動します。
 
 ## Repository Structure
 
@@ -77,14 +79,12 @@ The OSS version and production version share the same logical architecture.
 │   │   └── package.json
 │   └── web/                # React Router UI
 │       ├── app/            # React application source
-│       ├── public/         # Static assets
 │       └── package.json
 ├── infra/
-│   └── volumes/            # Docker volume configurations
-│       └── kong/           # Kong API Gateway config
+│   └── db/init/            # Database initialization scripts
 ├── .github/
 │   └── workflows/          # GitHub Actions (CI/CD)
-├── docker-compose.yml      # Local development infrastructure
+├── docker-compose.yml      # Local DB + Auth only
 ├── .env.example            # Environment variables template
 ├── package.json            # Root package.json (monorepo scripts)
 ├── pnpm-workspace.yaml     # pnpm workspace config
@@ -120,46 +120,56 @@ cp .env.example .env
 
 Edit `.env` as needed. For local development, the default values should work.
 
-### 4. Start Supabase services (Database, Auth, etc.)
+### 4. Create SSL certificate
 
 ```bash
-pnpm dev:up
+# Install mkcert (macOS)
+brew install mkcert
+mkcert -install
+
+# Generate certificate
+cd infra/nginx/certs
+mkcert eluma.test
+```
+
+### 5. Add host entry
+
+```bash
+# Add to /etc/hosts
+echo "127.0.0.1 eluma.test" | sudo tee -a /etc/hosts
+```
+
+### 6. Start all services
+
+```bash
+docker compose up
 ```
 
 This starts:
 
+- Nginx (reverse proxy with SSL)
 - PostgreSQL database
-- Supabase Auth (GoTrue)
-- Supabase REST API (PostgREST)
-- Supabase Realtime
-- Supabase Storage
-- Kong API Gateway
-- Supabase Studio (optional, for DB management)
+- GoTrue (Supabase Auth)
+- Hono API server
+- React Router UI
 
-### 5. Start API and Web servers
+### 7. Access
 
-In separate terminals:
+- https://eluma.test
+- Supabase Studio: `pnpm db:studio` → http://localhost:54323
 
-```bash
-# Terminal 1: Start API server
-pnpm dev:api
+### Local Development (with hot reload)
 
-# Terminal 2: Start Web server
-pnpm dev:web
-```
-
-Or start everything with Docker Compose (including API and Web):
+For development with hot reload, start DB/Auth in Docker and run API/Web natively:
 
 ```bash
-docker compose --profile apps up
+# Start DB and Auth only
+docker compose up db auth
+
+# In separate terminals:
+pnpm dev:api   # API with hot reload
+pnpm dev:web   # Web with hot reload
 ```
-
-### 6. Access
-
-- UI: http://localhost:3000
-- API: http://localhost:8787
-- Supabase Studio: http://localhost:54323
-- Kong Gateway: http://localhost:8000
 
 ### Useful Commands
 

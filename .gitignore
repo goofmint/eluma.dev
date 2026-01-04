@@ -61,3 +61,6 @@ temp/
 
 # Docker volumes (managed by Docker)
 # Do not ignore docker-compose.yml or Dockerfiles
+
+# SSL certificates (generated locally with mkcert)
+infra/nginx/certs/*.pem
