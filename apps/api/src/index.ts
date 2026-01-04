@@ -1,28 +1,38 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
 import { cors } from 'hono/cors';
 
-const app = new OpenAPIHono();
+// Environment bindings type for Cloudflare Workers
+type Bindings = {
+  ALLOWED_ORIGINS?: string;
+};
+
+const app = new OpenAPIHono<{ Bindings: Bindings }>();
+
+// Helper to get env variable from Workers (c.env) or Node.js (process.env)
+const getEnv = (c: { env?: Bindings }, key: keyof Bindings): string | undefined => {
+  // Workers: c.env is populated by runtime
+  // Node.js with nodejs_compat: process.env is available
+  return c.env?.[key] || (typeof process !== 'undefined' ? process.env[key] : undefined);
+};
 
 // Enable CORS for all routes
-app.use(
-  '*',
-  cors({
-    origin: (origin) => {
-      // In Workers, use c.env; in Node.js, use process.env
-      const allowedOrigins =
-        process.env.ALLOWED_ORIGINS || 'https://eluma.test';
+app.use('*', async (c, next) => {
+  const allowedOrigins = getEnv(c, 'ALLOWED_ORIGINS') || 'https://eluma.test';
 
+  const corsMiddleware = cors({
+    origin: (origin) => {
       if (allowedOrigins === '*') {
         return origin;
       }
-
       const whitelist = allowedOrigins.split(',').map((o) => o.trim());
       return whitelist.includes(origin) ? origin : null;
     },
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
-  })
-);
+  });
+
+  return corsMiddleware(c, next);
+});
 
 // Schema definitions
 const HealthCheckResponseSchema = z

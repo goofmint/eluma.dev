@@ -12,4 +12,4 @@ vars = { ENVIRONMENT = "development" }
 
 # For production deployment
 [env.production]
-vars = { ENVIRONMENT = "production" }
+vars = { ENVIRONMENT = "production", ALLOWED_ORIGINS = "https://your-domain.com" }
