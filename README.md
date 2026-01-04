@@ -220,12 +220,12 @@ Set these in your repository settings (Settings → Secrets and variables → Ac
 
 Set these in Settings → Variables and variables → Actions → Variables:
 
-| Variable                | Environment | Required     | Description                         | Example                                  |
-| ----------------------- | ----------- | ------------ | ----------------------------------- | ---------------------------------------- |
-| `VITE_API_URL`          | Production  | Optional     | Production API URL                  | `https://api.example.com`                |
-| `VITE_AUTH_URL`         | Production  | Optional     | Production Auth URL                 | `https://auth.example.com`               |
-| `VITE_API_URL_PREVIEW`  | Preview     | **Required** | Preview API URL for PR deployments  | `https://eluma-api-preview.workers.dev`  |
-| `VITE_AUTH_URL_PREVIEW` | Preview     | **Required** | Preview Auth URL for PR deployments | `https://eluma-auth-preview.workers.dev` |
+| Variable                | Environment | Required     | Description                         | Example                                              |
+| ----------------------- | ----------- | ------------ | ----------------------------------- | ---------------------------------------------------- |
+| `VITE_API_URL`          | Production  | Optional     | Production API URL                  | `https://eluma-api.<subdomain>.workers.dev`          |
+| `VITE_AUTH_URL`         | Production  | Optional     | Production Auth URL                 | `https://eluma-auth.<subdomain>.workers.dev`         |
+| `VITE_API_URL_PREVIEW`  | Preview     | **Required** | Preview API URL for PR deployments  | `https://eluma-api-preview.<subdomain>.workers.dev`  |
+| `VITE_AUTH_URL_PREVIEW` | Preview     | **Required** | Preview Auth URL for PR deployments | `https://eluma-auth-preview.<subdomain>.workers.dev` |
 
 > **Note**: Preview variables (`VITE_API_URL_PREVIEW` and `VITE_AUTH_URL_PREVIEW`) are required for the PR preview workflow to build successfully. Production variables are optional if your app uses relative paths.
 
