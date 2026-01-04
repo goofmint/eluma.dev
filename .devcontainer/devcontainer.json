@@ -48,9 +48,7 @@
   },
 
   // Use the host's .env file if it exists
-  "runArgs": [
-    "--env-file=${localWorkspaceFolder}/.env"
-  ],
+  "runArgs": ["--env-file=${localWorkspaceFolder}/.env"],
 
   // Run services on container creation
   "initializeCommand": [
@@ -156,12 +154,12 @@
 
   // Port forwarding
   "forwardPorts": [
-    3000,   // Web UI
-    8787,   // API (Hono/Wrangler)
-    5432,   // PostgreSQL
-    8000,   // Supabase Kong Gateway
-    8443,   // Kong HTTPS
-    54323   // Supabase Studio
+    3000, // Web UI
+    8787, // API (Hono/Wrangler)
+    5432, // PostgreSQL
+    8000, // Supabase Kong Gateway
+    8443, // Kong HTTPS
+    54323 // Supabase Studio
   ],
 
   // Port labels

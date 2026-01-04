@@ -128,6 +128,7 @@ pnpm dev:up
 ```
 
 This command starts:
+
 - PostgreSQL database
 - Supabase services (Auth, REST, Realtime, Storage)
 - Kong API Gateway
@@ -138,11 +139,13 @@ This command starts:
 Open two terminal windows/tabs and run:
 
 **Terminal 1 - API Server**:
+
 ```bash
 pnpm dev:api
 ```
 
 **Terminal 2 - Web UI**:
+
 ```bash
 pnpm dev:web
 ```
@@ -266,58 +269,59 @@ pnpm db:reset
 
 ### Infrastructure Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev:up` | Start all infrastructure services |
-| `pnpm dev:down` | Stop all services |
+| Command          | Description                                      |
+| ---------------- | ------------------------------------------------ |
+| `pnpm dev:up`    | Start all infrastructure services                |
+| `pnpm dev:down`  | Stop all services                                |
 | `pnpm dev:reset` | Stop services and delete all volumes (DANGEROUS) |
-| `pnpm dev:logs` | Follow logs from all services |
-| `pnpm dev:ps` | List running services |
+| `pnpm dev:logs`  | Follow logs from all services                    |
+| `pnpm dev:ps`    | List running services                            |
 
 ### Development Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev:api` | Start API development server |
-| `pnpm dev:web` | Start Web UI development server |
-| `pnpm build` | Build all apps |
-| `pnpm build:api` | Build API only |
-| `pnpm build:web` | Build Web only |
+| Command          | Description                     |
+| ---------------- | ------------------------------- |
+| `pnpm dev:api`   | Start API development server    |
+| `pnpm dev:web`   | Start Web UI development server |
+| `pnpm build`     | Build all apps                  |
+| `pnpm build:api` | Build API only                  |
+| `pnpm build:web` | Build Web only                  |
 
 ### Code Quality Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm lint` | Lint all packages |
-| `pnpm lint:fix` | Fix linting errors |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check code formatting |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm test` | Run tests |
+| Command             | Description                  |
+| ------------------- | ---------------------------- |
+| `pnpm lint`         | Lint all packages            |
+| `pnpm lint:fix`     | Fix linting errors           |
+| `pnpm format`       | Format code with Prettier    |
+| `pnpm format:check` | Check code formatting        |
+| `pnpm typecheck`    | Run TypeScript type checking |
+| `pnpm test`         | Run tests                    |
 
 ### Database Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm db:studio` | Open Supabase Studio |
-| `pnpm db:migrate` | Run database migrations |
-| `pnpm db:seed` | Seed database with test data |
-| `pnpm db:reset` | Reset database (DANGEROUS) |
+| Command           | Description                  |
+| ----------------- | ---------------------------- |
+| `pnpm db:studio`  | Open Supabase Studio         |
+| `pnpm db:migrate` | Run database migrations      |
+| `pnpm db:seed`    | Seed database with test data |
+| `pnpm db:reset`   | Reset database (DANGEROUS)   |
 
 ---
 
 ## Port Mappings
 
-| Port | Service | Description |
-|------|---------|-------------|
-| 3000 | Web UI | React Router development server |
-| 8787 | API | Hono/Wrangler development server |
-| 5432 | PostgreSQL | Database (for external tools) |
-| 8000 | Kong | Supabase API Gateway (HTTP) |
-| 8443 | Kong | Supabase API Gateway (HTTPS) |
-| 54323 | Studio | Supabase Studio web UI |
+| Port  | Service    | Description                      |
+| ----- | ---------- | -------------------------------- |
+| 3000  | Web UI     | React Router development server  |
+| 8787  | API        | Hono/Wrangler development server |
+| 5432  | PostgreSQL | Database (for external tools)    |
+| 8000  | Kong       | Supabase API Gateway (HTTP)      |
+| 8443  | Kong       | Supabase API Gateway (HTTPS)     |
+| 54323 | Studio     | Supabase Studio web UI           |
 
 VS Code will automatically forward these ports. You can access them at:
+
 - `http://localhost:<port>` (inside the container)
 - `http://localhost:<port>` (on your host machine)
 
@@ -330,6 +334,7 @@ VS Code will automatically forward these ports. You can access them at:
 **Problem**: Container fails to build
 
 **Solutions**:
+
 1. Ensure Docker is running:
    ```bash
    docker info
@@ -347,6 +352,7 @@ VS Code will automatically forward these ports. You can access them at:
 **Problem**: Cannot connect to Docker daemon
 
 **Solutions**:
+
 1. Ensure you're in the docker group:
    ```bash
    groups | grep docker
@@ -366,6 +372,7 @@ VS Code will automatically forward these ports. You can access them at:
 **Problem**: `pnpm dev:up` fails or services won't start
 
 **Solutions**:
+
 1. Check logs:
    ```bash
    docker compose logs
@@ -389,6 +396,7 @@ VS Code will automatically forward these ports. You can access them at:
 **Problem**: File operations are slow
 
 **Solutions**:
+
 1. The Dev Container already uses named volumes for `node_modules` (fast)
 2. Ensure Docker Desktop has enough resources allocated
 3. Consider using Docker Desktop's VirtioFS:
@@ -399,6 +407,7 @@ VS Code will automatically forward these ports. You can access them at:
 **Problem**: Services fail with missing environment variables
 
 **Solutions**:
+
 1. Ensure `.env` file exists:
    ```bash
    ls -la .env
@@ -415,6 +424,7 @@ VS Code will automatically forward these ports. You can access them at:
 **Problem**: `pnpm install` fails with dependency errors
 
 **Solutions**:
+
 1. Clear pnpm cache:
    ```bash
    pnpm store prune
@@ -434,6 +444,7 @@ VS Code will automatically forward these ports. You can access them at:
 **Problem**: Cannot connect to PostgreSQL
 
 **Solutions**:
+
 1. Check if database is running:
    ```bash
    docker compose ps db
@@ -471,6 +482,7 @@ VS Code will automatically forward these ports. You can access them at:
 ### Q: How do I access the database from a GUI tool on my host?
 
 **A**: Use the following connection settings:
+
 - Host: `localhost`
 - Port: `5432`
 - Database: `eluma`
@@ -486,6 +498,7 @@ Alternatively, use Supabase Studio at http://localhost:54323
 ### Q: How do I run the API and Web apps in Docker?
 
 **A**: Use the `apps` profile:
+
 ```bash
 docker compose --profile apps up
 ```
@@ -495,6 +508,7 @@ However, for development, it's recommended to run them directly with pnpm for fa
 ### Q: How do I clean up everything and start fresh?
 
 **A**:
+
 ```bash
 # Stop and remove all containers and volumes
 pnpm dev:reset
@@ -506,6 +520,7 @@ pnpm dev:reset
 ### Q: Can I use this setup without VS Code?
 
 **A**: Yes, use the devcontainer CLI:
+
 ```bash
 npm install -g @devcontainers/cli
 devcontainer open .

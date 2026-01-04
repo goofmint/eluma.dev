@@ -20,11 +20,11 @@
     "container:exec": "devcontainer exec --workspace-folder .",
     "container:down": "node ./scripts/stop-devcontainer.js",
     "container:logs": "node ./scripts/log-devcontainer.js",
-    "dev:up": "docker compose up -d db kong auth rest realtime storage imgproxy meta studio",
+    "dev:up": "docker compose up -d db auth",
     "dev:api": "pnpm --filter @eluma/api dev",
     "dev:web": "pnpm --filter @eluma/web dev",
     "dev:down": "docker compose down",
-    "dev:reset": "docker compose down -v && echo 'WARNING: All volumes have been deleted!'",
+    "dev:reset": "docker compose down -v && echo 'WARNING: All volumes deleted!'",
     "dev:logs": "docker compose logs -f",
     "dev:ps": "docker compose ps",
     "build": "pnpm --filter './apps/*' build",
@@ -40,7 +40,7 @@
     "db:migrate": "pnpm --filter @eluma/api db:migrate",
     "db:seed": "pnpm --filter @eluma/api db:seed",
     "db:reset": "pnpm --filter @eluma/api db:reset",
-    "db:studio": "docker compose up -d studio && echo 'Supabase Studio available at http://localhost:54323'",
+    "db:studio": "docker compose --profile studio up -d && echo 'Supabase Studio: http://localhost:54323'",
     "prepare": "husky install || true"
   },
   "devDependencies": {
@@ -49,7 +49,10 @@
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.8.3",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.0",
@@ -59,7 +62,7 @@
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.1",
+  "packageManager": "pnpm@9.15.4",
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
       "eslint --fix",

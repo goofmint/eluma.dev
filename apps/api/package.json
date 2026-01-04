@@ -1,0 +1,33 @@
+{
+  "name": "@eluma/api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "dev:node": "tsx watch src/server.ts",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "build:node": "tsc -p tsconfig.node.json",
+    "start": "node dist/server.js",
+    "deploy": "wrangler deploy",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist .wrangler"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.1",
+    "@hono/zod-openapi": "^0.19.6",
+    "hono": "^4.10.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250123.0",
+    "@types/node": "^20.17.16",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.0",
+    "wrangler": "^4.1.0"
+  }
+}
