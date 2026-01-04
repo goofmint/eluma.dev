@@ -211,21 +211,21 @@ pnpm build
 
 Set these in your repository settings (Settings → Secrets and variables → Actions):
 
-| Secret | Description |
-|--------|-------------|
-| `CLOUDFLARE_API_TOKEN` | API token with Workers/Pages permissions |
-| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID |
+| Secret                  | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | API token with Workers/Pages permissions |
+| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID               |
 
 ### GitHub Variables
 
 Set these in Settings → Variables and variables → Actions → Variables:
 
-| Variable | Environment | Required | Description | Example |
-|----------|-------------|----------|-------------|---------|
-| `VITE_API_URL` | Production | Optional | Production API URL | `https://api.example.com` |
-| `VITE_AUTH_URL` | Production | Optional | Production Auth URL | `https://auth.example.com` |
-| `VITE_API_URL_PREVIEW` | Preview | **Required** | Preview API URL for PR deployments | `https://eluma-api-preview.workers.dev` |
-| `VITE_AUTH_URL_PREVIEW` | Preview | **Required** | Preview Auth URL for PR deployments | `https://eluma-auth-preview.workers.dev` |
+| Variable                | Environment | Required     | Description                         | Example                                  |
+| ----------------------- | ----------- | ------------ | ----------------------------------- | ---------------------------------------- |
+| `VITE_API_URL`          | Production  | Optional     | Production API URL                  | `https://api.example.com`                |
+| `VITE_AUTH_URL`         | Production  | Optional     | Production Auth URL                 | `https://auth.example.com`               |
+| `VITE_API_URL_PREVIEW`  | Preview     | **Required** | Preview API URL for PR deployments  | `https://eluma-api-preview.workers.dev`  |
+| `VITE_AUTH_URL_PREVIEW` | Preview     | **Required** | Preview Auth URL for PR deployments | `https://eluma-auth-preview.workers.dev` |
 
 > **Note**: Preview variables (`VITE_API_URL_PREVIEW` and `VITE_AUTH_URL_PREVIEW`) are required for the PR preview workflow to build successfully. Production variables are optional if your app uses relative paths.
 

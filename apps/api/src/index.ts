@@ -9,10 +9,16 @@ type Bindings = {
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
 // Helper to get env variable from Workers (c.env) or Node.js (process.env)
-const getEnv = (c: { env?: Bindings }, key: keyof Bindings): string | undefined => {
+const getEnv = (
+  c: { env?: Bindings },
+  key: keyof Bindings
+): string | undefined => {
   // Workers: c.env is populated by runtime
   // Node.js with nodejs_compat: process.env is available
-  return c.env?.[key] || (typeof process !== 'undefined' ? process.env[key] : undefined);
+  return (
+    c.env?.[key] ||
+    (typeof process !== 'undefined' ? process.env[key] : undefined)
+  );
 };
 
 // Enable CORS for all routes
@@ -40,7 +46,10 @@ app.use('*', async (c, next) => {
 const HealthCheckResponseSchema = z
   .object({
     status: z.string().openapi({ example: 'ok' }),
-    timestamp: z.string().datetime().openapi({ example: '2025-01-01T00:00:00.000Z' }),
+    timestamp: z
+      .string()
+      .datetime()
+      .openapi({ example: '2025-01-01T00:00:00.000Z' }),
     service: z.string().openapi({ example: 'eluma-api' }),
   })
   .openapi('HealthCheckResponse');
