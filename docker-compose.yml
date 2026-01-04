@@ -83,6 +83,10 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-eluma}
       AUTH_URL: http://auth:9999
       JWT_SECRET: ${JWT_SECRET}
+      # Supabase settings for production mode (not used in self-hosted with direct DB)
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
     depends_on:
@@ -102,6 +106,8 @@ services:
       NODE_ENV: production
       VITE_API_URL: ${VITE_API_URL:-https://eluma.test/api}
       VITE_AUTH_URL: ${VITE_AUTH_URL:-https://eluma.test/auth}
+      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-https://eluma.test}
+      VITE_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
     depends_on:
       - api
 
