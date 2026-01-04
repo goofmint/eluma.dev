@@ -22,7 +22,7 @@ services:
 
   # Supabase Studio (for local development)
   studio:
-    image: supabase/studio:20231123-64a766a
+    image: supabase/studio:2025.12.15-sha-e98ba37
     container_name: eluma-studio
     restart: unless-stopped
     ports:
@@ -37,7 +37,7 @@ services:
 
   # Kong API Gateway
   kong:
-    image: kong:2.8.1
+    image: kong:3.9.1
     container_name: eluma-kong
     restart: unless-stopped
     ports:
@@ -88,7 +88,7 @@ services:
 
   # Supabase REST API
   rest:
-    image: postgrest/postgrest:v11.2.0
+    image: postgrest/postgrest:v14.3
     container_name: eluma-rest
     restart: unless-stopped
     environment:
@@ -114,7 +114,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       DB_NAME: ${POSTGRES_DB:-eluma}
       DB_AFTER_CONNECT_QUERY: 'SET search_path TO _realtime'
-      DB_ENC_KEY: supabaserealtime
+      DB_ENC_KEY: ${REALTIME_DB_ENC_KEY}
       API_JWT_SECRET: ${JWT_SECRET}
       FLY_ALLOC_ID: fly123
       FLY_APP_NAME: realtime
@@ -130,7 +130,7 @@ services:
 
   # Supabase Storage
   storage:
-    image: supabase/storage-api:v0.40.4
+    image: supabase/storage-api:v1.31.1
     container_name: eluma-storage
     restart: unless-stopped
     environment:
@@ -157,7 +157,7 @@ services:
 
   # Image Proxy (for image transformations)
   imgproxy:
-    image: darthsim/imgproxy:v3.8.0
+    image: darthsim/imgproxy:v3.30.1
     container_name: eluma-imgproxy
     restart: unless-stopped
     environment:
@@ -170,7 +170,7 @@ services:
 
   # Supabase Meta (for Studio)
   meta:
-    image: supabase/postgres-meta:v0.68.0
+    image: supabase/postgres-meta:v0.91.6
     container_name: eluma-meta
     restart: unless-stopped
     environment:
