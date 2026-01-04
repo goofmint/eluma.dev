@@ -56,5 +56,8 @@ temp/
 .wrangler/
 .dev.vars
 
+# React Router
+.react-router/
+
 # Docker volumes (managed by Docker)
 # Do not ignore docker-compose.yml or Dockerfiles

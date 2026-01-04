@@ -1,0 +1,15 @@
+name = "eluma-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[dev]
+port = 8787
+
+# For local development with docker compose
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+# For production deployment
+[env.production]
+vars = { ENVIRONMENT = "production" }
