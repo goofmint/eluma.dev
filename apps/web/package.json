@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router build",
+    "build:cloudflare": "BUILD_TARGET=cloudflare react-router build",
     "start": "react-router-serve ./build/server/index.js",
-    "deploy": "react-router build && wrangler deploy",
-    "deploy:preview": "react-router build && wrangler deploy --env preview",
+    "deploy": "BUILD_TARGET=cloudflare react-router build && wrangler deploy",
+    "deploy:preview": "BUILD_TARGET=cloudflare react-router build && wrangler deploy --env preview",
     "lint": "eslint app --ext .ts,.tsx",
     "lint:fix": "eslint app --ext .ts,.tsx --fix",
     "typecheck": "react-router typegen && tsc --noEmit",
