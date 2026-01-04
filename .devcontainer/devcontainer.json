@@ -1,0 +1,199 @@
+{
+  "name": "Eluma Development Container",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      "PNPM_VERSION": "8.15.1",
+      "WRANGLER_VERSION": "latest",
+      "SUPABASE_CLI_VERSION": "latest"
+    }
+  },
+
+  // Container configuration
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+  // Features to add to the dev container
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest",
+      "ppa": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+
+  // Mounts for persistent data
+  "mounts": [
+    // Mount Docker socket for docker-outside-of-docker
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+    // Persist pnpm store across container rebuilds
+    "source=eluma-pnpm-store,target=/home/node/.pnpm-store,type=volume",
+    // Persist node_modules for faster rebuilds
+    "source=eluma-node-modules,target=/workspace/node_modules,type=volume",
+    // Persist bash history
+    "source=eluma-bashhistory,target=/home/node/.bash_history,type=volume"
+  ],
+
+  // Environment variables
+  "containerEnv": {
+    "NODE_ENV": "development"
+  },
+
+  // Use the host's .env file if it exists
+  "runArgs": [
+    "--env-file=${localWorkspaceFolder}/.env"
+  ],
+
+  // Run services on container creation
+  "initializeCommand": [
+    "bash",
+    "-c",
+    "[ -f ${localWorkspaceFolder}/.env ] || cp ${localWorkspaceFolder}/.env.example ${localWorkspaceFolder}/.env"
+  ],
+
+  // Post-creation commands
+  "postCreateCommand": "bash -c 'sudo chown -R node:node /home/node/.pnpm-store /workspace/node_modules && pnpm install'",
+
+  // Post-start commands (optional: auto-start infra)
+  // Uncomment to auto-start infrastructure on container start
+  // "postStartCommand": "pnpm dev:up",
+
+  // VS Code customizations
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Language support
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+
+        // Database and Docker
+        "ms-azuretools.vscode-docker",
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg",
+
+        // Git
+        "eamodio.gitlens",
+
+        // Utilities
+        "christian-kohler.path-intellisense",
+        "usernamehw.errorlens",
+        "streetsidesoftware.code-spell-checker",
+
+        // TypeScript and React
+        "ms-vscode.vscode-typescript-next",
+
+        // Environment files
+        "mikestead.dotenv",
+
+        // API development
+        "rangav.vscode-thunder-client"
+      ],
+
+      "settings": {
+        // Editor settings
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit",
+          "source.organizeImports": "explicit"
+        },
+        "editor.tabSize": 2,
+
+        // File associations
+        "files.eol": "\n",
+        "files.associations": {
+          "*.css": "tailwindcss"
+        },
+
+        // ESLint
+        "eslint.validate": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact"
+        ],
+
+        // TypeScript
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "typescript.enablePromptUseWorkspaceTsdk": true,
+
+        // Terminal
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash",
+            "icon": "terminal-bash"
+          }
+        },
+
+        // Docker
+        "docker.dockerPath": "/usr/local/bin/docker",
+
+        // SQLTools
+        "sqltools.connections": [
+          {
+            "name": "Eluma PostgreSQL (Local)",
+            "driver": "PostgreSQL",
+            "server": "localhost",
+            "port": 5432,
+            "database": "eluma",
+            "username": "postgres",
+            "password": "postgres"
+          }
+        ]
+      }
+    }
+  },
+
+  // Port forwarding
+  "forwardPorts": [
+    3000,   // Web UI
+    8787,   // API (Hono/Wrangler)
+    5432,   // PostgreSQL
+    8000,   // Supabase Kong Gateway
+    8443,   // Kong HTTPS
+    54323   // Supabase Studio
+  ],
+
+  // Port labels
+  "portsAttributes": {
+    "3000": {
+      "label": "Web UI",
+      "onAutoForward": "notify"
+    },
+    "8787": {
+      "label": "API",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "ignore"
+    },
+    "8000": {
+      "label": "Supabase API",
+      "onAutoForward": "notify"
+    },
+    "54323": {
+      "label": "Supabase Studio",
+      "onAutoForward": "openBrowser"
+    }
+  },
+
+  // User settings
+  "remoteUser": "node",
+
+  // Container lifecycle
+  "shutdownAction": "stopContainer",
+
+  // Features to enable
+  "updateContentCommand": "pnpm install"
+}

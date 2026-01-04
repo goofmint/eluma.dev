@@ -1,0 +1,72 @@
+{
+  "name": "eluma",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AI-Optimized Social Bookmark Platform",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/goofmint/eluma.dev.git"
+  },
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "container:build": "devcontainer build --workspace-folder .",
+    "container:up": "devcontainer up --workspace-folder .",
+    "container:open": "devcontainer open .",
+    "container:rebuild": "devcontainer build --workspace-folder . --no-cache",
+    "container:exec": "devcontainer exec --workspace-folder .",
+    "container:down": "docker stop $(docker ps -q --filter 'label=devcontainer.local_folder') 2>/dev/null || true",
+    "container:logs": "docker logs $(docker ps -q --filter 'label=devcontainer.local_folder') -f 2>/dev/null || echo 'No devcontainer is running'",
+    "dev:up": "docker compose up -d db kong auth rest realtime storage imgproxy meta studio",
+    "dev:api": "pnpm --filter @eluma/api dev",
+    "dev:web": "pnpm --filter @eluma/web dev",
+    "dev:down": "docker compose down",
+    "dev:reset": "docker compose down -v && echo 'WARNING: All volumes have been deleted!'",
+    "dev:logs": "docker compose logs -f",
+    "dev:ps": "docker compose ps",
+    "build": "pnpm --filter './apps/*' build",
+    "build:api": "pnpm --filter @eluma/api build",
+    "build:web": "pnpm --filter @eluma/web build",
+    "lint": "pnpm --filter './apps/*' --filter './packages/*' lint",
+    "lint:fix": "pnpm --filter './apps/*' --filter './packages/*' lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "test": "pnpm --filter './apps/*' --filter './packages/*' test",
+    "typecheck": "pnpm --filter './apps/*' --filter './packages/*' typecheck",
+    "clean": "pnpm --filter './apps/*' --filter './packages/*' clean && rm -rf node_modules",
+    "db:migrate": "pnpm --filter @eluma/api db:migrate",
+    "db:seed": "pnpm --filter @eluma/api db:seed",
+    "db:reset": "pnpm --filter @eluma/api db:reset",
+    "db:studio": "docker compose up -d studio && echo 'Supabase Studio available at http://localhost:54323'",
+    "prepare": "husky install || true"
+  },
+  "devDependencies": {
+    "@devcontainers/cli": "^0.80.3",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.1",
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  }
+}
