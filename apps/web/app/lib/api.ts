@@ -62,7 +62,7 @@ export async function checkHealth(): Promise<HealthCheckResponse> {
 // Bookmark API
 export async function getBookmarks(): Promise<Bookmark[]> {
   const env = getEnv();
-  const response = await fetchWithAuth(`${env.VITE_API_URL}/api/bookmarks`);
+  const response = await fetchWithAuth(`${env.VITE_API_URL}/bookmarks`);
 
   if (!response.ok) {
     const error: ApiError = await response.json();
@@ -74,7 +74,7 @@ export async function getBookmarks(): Promise<Bookmark[]> {
 
 export async function createBookmark(input: CreateBookmarkInput): Promise<Bookmark> {
   const env = getEnv();
-  const response = await fetchWithAuth(`${env.VITE_API_URL}/api/bookmarks`, {
+  const response = await fetchWithAuth(`${env.VITE_API_URL}/bookmarks`, {
     method: 'POST',
     body: JSON.stringify(input),
   });
@@ -89,7 +89,7 @@ export async function createBookmark(input: CreateBookmarkInput): Promise<Bookma
 
 export async function getBookmark(id: string): Promise<Bookmark> {
   const env = getEnv();
-  const response = await fetchWithAuth(`${env.VITE_API_URL}/api/bookmarks/${id}`);
+  const response = await fetchWithAuth(`${env.VITE_API_URL}/bookmarks/${id}`);
 
   if (!response.ok) {
     const error: ApiError = await response.json();
