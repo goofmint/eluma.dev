@@ -1,14 +1,7 @@
 import type { Session, User } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import {
-  getSession,
-  getUser,
-  onAuthStateChange,
-  signIn,
-  signOut,
-  signUp,
-} from '../lib/supabase';
+import { getSupabase, signIn, signOut, signUp } from '../lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -27,23 +20,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Browser-only: get initial session
-    getSession().then((sess) => {
+    // Skip on server
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
+    const supabase = getSupabase();
+
+    // Debug: check localStorage
+    const storageKey = `sb-${new URL(import.meta.env.VITE_SUPABASE_URL).hostname.split('.')[0]}-auth-token`;
+    console.log('[Auth] Storage key:', storageKey);
+    console.log('[Auth] localStorage value:', localStorage.getItem(storageKey));
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: sess } }) => {
+      console.log('[Auth] getSession result:', sess ? 'has session' : 'no session');
       setSession(sess);
-      if (sess) {
-        getUser().then(setUser);
-      }
+      setUser(sess?.user ?? null);
       setLoading(false);
     });
 
     // Listen for auth changes
-    const subscription = onAuthStateChange((sess) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, sess) => {
       setSession(sess);
-      if (sess) {
-        getUser().then(setUser);
-      } else {
-        setUser(null);
-      }
+      setUser(sess?.user ?? null);
+      setLoading(false);
     });
 
     return () => {
