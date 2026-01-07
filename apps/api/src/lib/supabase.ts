@@ -1,12 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import type { Context } from 'hono';
-import type { AppEnv, Bindings } from '../types';
+import type { AppEnv, Bindings, StringBindings } from '../types';
 
-// Helper to get env variable from Workers (c.env) or Node.js (process.env)
+// Helper to get string env variable from Workers (c.env) or Node.js (process.env)
 export const getEnv = (
   c: Context<AppEnv> | { env?: Bindings },
-  key: keyof Bindings
+  key: keyof StringBindings
 ): string | undefined => {
   const env = 'env' in c ? c.env : undefined;
   return env?.[key] || (typeof process !== 'undefined' ? process.env[key] : undefined);
@@ -15,7 +15,7 @@ export const getEnv = (
 // Get required env variable or throw
 export const requireEnv = (
   c: Context<AppEnv> | { env?: Bindings },
-  key: keyof Bindings
+  key: keyof StringBindings
 ): string => {
   const value = getEnv(c, key);
   if (!value) {

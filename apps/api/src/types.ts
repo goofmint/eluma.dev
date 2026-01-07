@@ -1,13 +1,19 @@
 import { z } from '@hono/zod-openapi';
 
-// Environment bindings for Cloudflare Workers
-export type Bindings = {
+// String-based environment bindings (for getEnv helper)
+export type StringBindings = {
   ALLOWED_ORIGINS?: string;
   SUPABASE_URL?: string;
   SUPABASE_ANON_KEY?: string;
   SUPABASE_SERVICE_KEY?: string;
+  SUPABASE_PROJECT_REF?: string;
   JWT_SECRET?: string;
   DATABASE_URL?: string;
+};
+
+// Environment bindings for Cloudflare Workers (includes non-string bindings)
+export type Bindings = StringBindings & {
+  HYPERDRIVE?: Hyperdrive;
 };
 
 // User context from JWT

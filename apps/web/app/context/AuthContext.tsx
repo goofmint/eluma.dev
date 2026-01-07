@@ -28,10 +28,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const supabase = getSupabase();
 
-    // Debug: check localStorage
-    const storageKey = `sb-${new URL(import.meta.env.VITE_SUPABASE_URL).hostname.split('.')[0]}-auth-token`;
-    console.log('[Auth] Storage key:', storageKey);
-    console.log('[Auth] localStorage value:', localStorage.getItem(storageKey));
+    // Debug: check localStorage (dev only, never log actual token)
+    if (import.meta.env.DEV) {
+      const storageKey = `sb-${new URL(import.meta.env.VITE_SUPABASE_URL).hostname.split('.')[0]}-auth-token`;
+      console.log('[Auth] Storage key present:', !!localStorage.getItem(storageKey));
+    }
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: sess } }) => {
