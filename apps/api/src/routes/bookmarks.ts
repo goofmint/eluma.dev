@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
 import { eq, desc, and } from 'drizzle-orm';
-import { getDb, bookmarks } from '../db';
+import { getDb, bookmarks, setAuthContext } from '../db';
 import { authMiddleware, requireUser } from '../middleware/auth';
 import type { AppEnv, Bookmark } from '../types';
 import {
@@ -46,6 +46,9 @@ bookmarksRouter.openapi(listBookmarksRoute, async (c) => {
   const db = getDb(c);
 
   try {
+    // Set RLS context for database-level security
+    await setAuthContext(db, user.id);
+
     const result = await db
       .select()
       .from(bookmarks)
@@ -66,7 +69,10 @@ bookmarksRouter.openapi(listBookmarksRoute, async (c) => {
     return c.json(mapped, 200);
   } catch (error) {
     console.error('Failed to fetch bookmarks:', error);
-    return c.json({ error: 'Failed to fetch bookmarks', code: 'DB_ERROR' }, 500);
+    return c.json(
+      { error: 'Failed to fetch bookmarks', code: 'DB_ERROR' },
+      500
+    );
   }
 });
 
@@ -110,6 +116,9 @@ bookmarksRouter.openapi(createBookmarkRoute, async (c) => {
   const body = c.req.valid('json');
 
   try {
+    // Set RLS context for database-level security
+    await setAuthContext(db, user.id);
+
     const [result] = await db
       .insert(bookmarks)
       .values({
@@ -135,7 +144,10 @@ bookmarksRouter.openapi(createBookmarkRoute, async (c) => {
     return c.json(mapped, 201);
   } catch (error) {
     console.error('Failed to create bookmark:', error);
-    return c.json({ error: 'Failed to create bookmark', code: 'DB_ERROR' }, 500);
+    return c.json(
+      { error: 'Failed to create bookmark', code: 'DB_ERROR' },
+      500
+    );
   }
 });
 
@@ -173,6 +185,9 @@ bookmarksRouter.openapi(getBookmarkRoute, async (c) => {
   const id = c.req.param('id');
 
   try {
+    // Set RLS context for database-level security
+    await setAuthContext(db, user.id);
+
     const [result] = await db
       .select()
       .from(bookmarks)
