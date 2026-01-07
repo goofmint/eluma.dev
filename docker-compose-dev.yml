@@ -3,8 +3,8 @@ services:
   api:
     build: !reset null
     image: node:20-slim
-    working_dir: /app
-    command: sh -c "corepack enable && pnpm install && pnpm dev:node"
+    working_dir: /app/apps/api
+    command: sh -c "corepack enable && cd /app && pnpm install && cd /app/apps/api && pnpm dev:node"
     volumes:
       - .:/app
       - /app/node_modules
