@@ -1,0 +1,29 @@
+services:
+  # API - development mode with hot reload
+  api:
+    build: !reset null
+    image: node:20-slim
+    working_dir: /app
+    command: sh -c "corepack enable && pnpm install && pnpm dev:node"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/api/node_modules
+    environment:
+      NODE_ENV: development
+
+  # Web - development mode with hot reload
+  web:
+    build: !reset null
+    image: node:20-slim
+    working_dir: /app/apps/web
+    command: sh -c "corepack enable && cd /app && pnpm install && cd /app/apps/web && pnpm dev --host 0.0.0.0 --port 3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/web/node_modules
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: /api
+      VITE_SUPABASE_URL: https://eluma.test
+      VITE_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
