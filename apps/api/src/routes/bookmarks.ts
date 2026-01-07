@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
-import { getDbClient, isNodeEnv } from '../lib/db';
-import { createSupabaseClient, getEnv } from '../lib/supabase';
+import { eq, desc, and } from 'drizzle-orm';
+import { getDb, bookmarks } from '../db';
 import { authMiddleware, requireUser } from '../middleware/auth';
 import type { AppEnv, Bookmark } from '../types';
 import {
@@ -10,10 +10,12 @@ import {
   ErrorResponseSchema,
 } from '../types';
 
-const bookmarks = new OpenAPIHono<AppEnv>();
+type Visibility = Bookmark['visibility'];
+
+const bookmarksRouter = new OpenAPIHono<AppEnv>();
 
 // Apply auth middleware to all bookmark routes
-bookmarks.use('*', authMiddleware);
+bookmarksRouter.use('*', authMiddleware);
 
 // List bookmarks route
 const listBookmarksRoute = createRoute({
@@ -39,45 +41,33 @@ const listBookmarksRoute = createRoute({
   },
 });
 
-bookmarks.openapi(listBookmarksRoute, async (c) => {
+bookmarksRouter.openapi(listBookmarksRoute, async (c) => {
   const user = requireUser(c);
+  const db = getDb(c);
 
-  // Use direct PostgreSQL for self-hosted mode
-  if (isNodeEnv() && getEnv(c, 'DATABASE_URL')) {
-    const db = await getDbClient(c);
-    try {
-      const data = await db.query<Bookmark>(
-        `SELECT id, owner_user_id, url, title, note, visibility, created_at, updated_at
-         FROM public.bookmarks
-         WHERE owner_user_id = $1
-         ORDER BY created_at DESC`,
-        [user.id]
-      );
-      return c.json(data, 200);
-    } catch (error) {
-      console.error('Failed to fetch bookmarks:', error);
-      return c.json({ error: 'Failed to fetch bookmarks', code: 'DB_ERROR' }, 500);
-    } finally {
-      await db.close();
-    }
-  }
+  try {
+    const result = await db
+      .select()
+      .from(bookmarks)
+      .where(eq(bookmarks.ownerUserId, user.id))
+      .orderBy(desc(bookmarks.createdAt));
 
-  // Use Supabase client for production (with PostgREST)
-  const token = c.get('accessToken');
-  const supabase = createSupabaseClient(c, token);
+    const mapped = result.map((row) => ({
+      id: row.id,
+      owner_user_id: row.ownerUserId,
+      url: row.url,
+      title: row.title,
+      note: row.note,
+      visibility: row.visibility as Visibility,
+      created_at: row.createdAt.toISOString(),
+      updated_at: row.updatedAt.toISOString(),
+    }));
 
-  const { data, error } = await supabase
-    .from('bookmarks')
-    .select('*')
-    .eq('owner_user_id', user.id)
-    .order('created_at', { ascending: false });
-
-  if (error) {
+    return c.json(mapped, 200);
+  } catch (error) {
     console.error('Failed to fetch bookmarks:', error);
     return c.json({ error: 'Failed to fetch bookmarks', code: 'DB_ERROR' }, 500);
   }
-
-  return c.json((data || []) as Bookmark[], 200);
 });
 
 // Create bookmark route
@@ -114,54 +104,39 @@ const createBookmarkRoute = createRoute({
   },
 });
 
-bookmarks.openapi(createBookmarkRoute, async (c) => {
+bookmarksRouter.openapi(createBookmarkRoute, async (c) => {
   const user = requireUser(c);
+  const db = getDb(c);
   const body = c.req.valid('json');
 
-  // Use direct PostgreSQL for self-hosted mode
-  if (isNodeEnv() && getEnv(c, 'DATABASE_URL')) {
-    const db = await getDbClient(c);
-    try {
-      const data = await db.queryOne<Bookmark>(
-        `INSERT INTO public.bookmarks (owner_user_id, url, title, note, visibility)
-         VALUES ($1, $2, $3, $4, $5)
-         RETURNING id, owner_user_id, url, title, note, visibility, created_at, updated_at`,
-        [user.id, body.url, body.title || null, body.note || null, body.visibility || 'friends']
-      );
-      if (!data) {
-        return c.json({ error: 'Failed to create bookmark', code: 'DB_ERROR' }, 500);
-      }
-      return c.json(data, 201);
-    } catch (error) {
-      console.error('Failed to create bookmark:', error);
-      return c.json({ error: 'Failed to create bookmark', code: 'DB_ERROR' }, 500);
-    } finally {
-      await db.close();
-    }
-  }
+  try {
+    const [result] = await db
+      .insert(bookmarks)
+      .values({
+        ownerUserId: user.id,
+        url: body.url,
+        title: body.title || null,
+        note: body.note || null,
+        visibility: body.visibility || 'friends',
+      })
+      .returning();
 
-  // Use Supabase client for production (with PostgREST)
-  const token = c.get('accessToken');
-  const supabase = createSupabaseClient(c, token);
+    const mapped = {
+      id: result.id,
+      owner_user_id: result.ownerUserId,
+      url: result.url,
+      title: result.title,
+      note: result.note,
+      visibility: result.visibility as Visibility,
+      created_at: result.createdAt.toISOString(),
+      updated_at: result.updatedAt.toISOString(),
+    };
 
-  const { data, error } = await supabase
-    .from('bookmarks')
-    .insert({
-      owner_user_id: user.id,
-      url: body.url,
-      title: body.title || null,
-      note: body.note || null,
-      visibility: body.visibility || 'friends',
-    })
-    .select()
-    .single();
-
-  if (error || !data) {
+    return c.json(mapped, 201);
+  } catch (error) {
     console.error('Failed to create bookmark:', error);
     return c.json({ error: 'Failed to create bookmark', code: 'DB_ERROR' }, 500);
   }
-
-  return c.json(data as Bookmark, 201);
 });
 
 // Get single bookmark route
@@ -192,48 +167,37 @@ const getBookmarkRoute = createRoute({
   },
 });
 
-bookmarks.openapi(getBookmarkRoute, async (c) => {
+bookmarksRouter.openapi(getBookmarkRoute, async (c) => {
   const user = requireUser(c);
+  const db = getDb(c);
   const id = c.req.param('id');
 
-  // Use direct PostgreSQL for self-hosted mode
-  if (isNodeEnv() && getEnv(c, 'DATABASE_URL')) {
-    const db = await getDbClient(c);
-    try {
-      const data = await db.queryOne<Bookmark>(
-        `SELECT id, owner_user_id, url, title, note, visibility, created_at, updated_at
-         FROM public.bookmarks
-         WHERE id = $1 AND owner_user_id = $2`,
-        [id, user.id]
-      );
-      if (!data) {
-        return c.json({ error: 'Bookmark not found', code: 'NOT_FOUND' }, 404);
-      }
-      return c.json(data, 200);
-    } catch (error) {
-      console.error('Failed to fetch bookmark:', error);
-      return c.json({ error: 'Failed to fetch bookmark', code: 'DB_ERROR' }, 500);
-    } finally {
-      await db.close();
+  try {
+    const [result] = await db
+      .select()
+      .from(bookmarks)
+      .where(and(eq(bookmarks.id, id), eq(bookmarks.ownerUserId, user.id)));
+
+    if (!result) {
+      return c.json({ error: 'Bookmark not found', code: 'NOT_FOUND' }, 404);
     }
+
+    const mapped = {
+      id: result.id,
+      owner_user_id: result.ownerUserId,
+      url: result.url,
+      title: result.title,
+      note: result.note,
+      visibility: result.visibility as Visibility,
+      created_at: result.createdAt.toISOString(),
+      updated_at: result.updatedAt.toISOString(),
+    };
+
+    return c.json(mapped, 200);
+  } catch (error) {
+    console.error('Failed to fetch bookmark:', error);
+    return c.json({ error: 'Failed to fetch bookmark', code: 'DB_ERROR' }, 500);
   }
-
-  // Use Supabase client for production (with PostgREST)
-  const token = c.get('accessToken');
-  const supabase = createSupabaseClient(c, token);
-
-  const { data, error } = await supabase
-    .from('bookmarks')
-    .select('*')
-    .eq('id', id)
-    .eq('owner_user_id', user.id)
-    .single();
-
-  if (error || !data) {
-    return c.json({ error: 'Bookmark not found', code: 'NOT_FOUND' }, 404);
-  }
-
-  return c.json(data as Bookmark, 200);
 });
 
-export default bookmarks;
+export default bookmarksRouter;
