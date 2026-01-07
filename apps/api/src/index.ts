@@ -1,30 +1,13 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
 import { cors } from 'hono/cors';
+import { getEnv } from './lib/supabase';
+import bookmarks from './routes/bookmarks';
+import type { AppEnv } from './types';
 
-// Environment bindings type for Cloudflare Workers
-type Bindings = {
-  ALLOWED_ORIGINS?: string;
-};
-
-const app = new OpenAPIHono<{ Bindings: Bindings }>();
-
-// Helper to get env variable from Workers (c.env) or Node.js (process.env)
-const getEnv = (
-  c: { env?: Bindings },
-  key: keyof Bindings
-): string | undefined => {
-  // Workers: c.env is populated by runtime
-  // Node.js with nodejs_compat: process.env is available
-  return (
-    c.env?.[key] ||
-    (typeof process !== 'undefined' ? process.env[key] : undefined)
-  );
-};
+const app = new OpenAPIHono<AppEnv>();
 
 // Enable CORS for all routes
 app.use('*', async (c, next) => {
-  // ALLOWED_ORIGINS must be set in production
-  // Use '*' for development if not specified
   const allowedOrigins = getEnv(c, 'ALLOWED_ORIGINS') || '*';
 
   const corsMiddleware = cors({
@@ -46,10 +29,7 @@ app.use('*', async (c, next) => {
 const HealthCheckResponseSchema = z
   .object({
     status: z.string().openapi({ example: 'ok' }),
-    timestamp: z
-      .string()
-      .datetime()
-      .openapi({ example: '2025-01-01T00:00:00.000Z' }),
+    timestamp: z.string().datetime().openapi({ example: '2025-01-01T00:00:00.000Z' }),
     service: z.string().openapi({ example: 'eluma-api' }),
   })
   .openapi('HealthCheckResponse');
@@ -71,11 +51,7 @@ const healthzRoute = createRoute({
   description: 'Returns the health status of the API server',
   responses: {
     200: {
-      content: {
-        'application/json': {
-          schema: HealthCheckResponseSchema,
-        },
-      },
+      content: { 'application/json': { schema: HealthCheckResponseSchema } },
       description: 'API is healthy',
     },
   },
@@ -89,11 +65,7 @@ const rootRoute = createRoute({
   description: 'Returns basic API information and documentation link',
   responses: {
     200: {
-      content: {
-        'application/json': {
-          schema: RootResponseSchema,
-        },
-      },
+      content: { 'application/json': { schema: RootResponseSchema } },
       description: 'API information',
     },
   },
@@ -116,9 +88,11 @@ app.openapi(rootRoute, (c) => {
   });
 });
 
+// Mount bookmark routes (nginx strips /api prefix)
+app.route('/bookmarks', bookmarks);
+
 // OpenAPI documentation endpoint
 app.doc('/doc', (c) => {
-  // Dynamically set server URL based on request
   const protocol = c.req.header('x-forwarded-proto') || 'https';
   const host = c.req.header('host') || 'localhost';
   const baseUrl = `${protocol}://${host}`;
@@ -130,12 +104,17 @@ app.doc('/doc', (c) => {
       version: '0.0.1',
       description: 'AI-Optimized Social Bookmark Platform API',
     },
-    servers: [
-      {
-        url: baseUrl,
-        description: 'Current server',
+    servers: [{ url: baseUrl, description: 'Current server' }],
+    components: {
+      securitySchemes: {
+        Bearer: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Enter your JWT token',
+        },
       },
-    ],
+    },
   };
 });
 

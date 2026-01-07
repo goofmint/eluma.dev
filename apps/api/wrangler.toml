@@ -20,3 +20,7 @@ ENVIRONMENT = "production"
 [env.preview]
 name = "eluma-api-preview"
 vars = { ENVIRONMENT = "preview" }
+
+[[hyperdrive]]
+  binding = "HYPERDRIVE"
+  id = "414382ce30e54814923317c5df70b227"

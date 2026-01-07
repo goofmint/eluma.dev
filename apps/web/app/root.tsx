@@ -8,6 +8,7 @@ import {
 } from 'react-router';
 import './styles.css';
 import type { Route } from './+types/root';
+import { AuthProvider } from './context/AuthContext';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,7 +29,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <AuthProvider>
+      <Outlet />
+    </AuthProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

@@ -56,6 +56,9 @@ temp/
 .wrangler/
 .dev.vars
 
+# Claude Code settings
+.claude/
+
 # React Router
 .react-router/
 

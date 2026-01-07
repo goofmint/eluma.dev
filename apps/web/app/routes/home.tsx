@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
+import { useAuth } from '../context/AuthContext';
 import { checkHealth, type HealthCheckResponse } from '../lib/api';
 import type { Route } from './+types/home';
 
@@ -10,11 +12,23 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export default function Home() {
+  const { user, loading } = useAuth();
+
   return (
     <div className="container">
       <header className="header">
         <h1>Eluma</h1>
         <p className="tagline">AI-Optimized Social Bookmark Platform</p>
+        <nav className="nav">
+          {loading ? null : user ? (
+            <Link to="/bookmarks" className="nav-link">My Bookmarks</Link>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link">Sign In</Link>
+              <Link to="/signup" className="nav-link nav-link-primary">Sign Up</Link>
+            </>
+          )}
+        </nav>
       </header>
 
       <main className="main">
