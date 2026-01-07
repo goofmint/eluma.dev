@@ -19,5 +19,8 @@ export default defineConfig(async () => {
       port: 3000,
       allowedHosts: ['eluma.test', 'localhost'],
     },
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+    },
   };
 });
