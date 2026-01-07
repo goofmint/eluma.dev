@@ -1,7 +1,14 @@
 import type { Session, User } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getSession, getUser, onAuthStateChange, signIn, signOut, signUp } from '../lib/supabase';
+import {
+  getSession,
+  getUser,
+  onAuthStateChange,
+  signIn,
+  signOut,
+  signUp,
+} from '../lib/supabase';
 
 interface AuthContextType {
   user: User | null;
@@ -18,18 +25,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false);
-
-  // Mark when we're on the client
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
-    // Only check session on client (localStorage not available on server)
-    if (!isClient) return;
-
-    // Get initial session
+    // Browser-only: get initial session
     getSession().then((sess) => {
       setSession(sess);
       if (sess) {
@@ -51,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [isClient]);
+  }, []);
 
   const handleSignUp = async (email: string, password: string) => {
     await signUp(email, password);
