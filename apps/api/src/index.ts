@@ -88,8 +88,8 @@ app.openapi(rootRoute, (c) => {
   });
 });
 
-// Mount bookmark routes
-app.route('/api/bookmarks', bookmarks);
+// Mount bookmark routes (nginx strips /api prefix)
+app.route('/bookmarks', bookmarks);
 
 // OpenAPI documentation endpoint
 app.doc('/doc', (c) => {
